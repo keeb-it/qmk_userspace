@@ -141,9 +141,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return true;
         default:
-            if (jiggle_token != INVALID_DEFERRED_TOKEN) {
-                return false; // swallow everything if jiggler is on
+            // NOTE: board will be stuck on non-default layer if we don't let IS_QK_MOMENTARY and IS_QK_LAYER_TAP go through
+            if (jiggle_token == INVALID_DEFERRED_TOKEN || IS_QK_MOMENTARY(keycode) || IS_QK_LAYER_TAP(keycode)) {
+                return true;
             }
-            return true; // Process all other keycodes normally
+            return false; // swallow everything else if jiggler is on
     }
 }
